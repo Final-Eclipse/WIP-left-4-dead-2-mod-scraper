@@ -9,6 +9,7 @@ from random import randint
 # Repeat scraps for every page of mods
 # Display unicode instead of showing \u78a7 such as in some mod descriptions
 # Go into each mod individually and get the full length description and preview images (not the thumbnail)
+# Make test template in PyQt5
 
 # Will show less mods versus being signed into Steam to hide NSFW 
 class Scraper():
@@ -94,7 +95,7 @@ class Scraper():
     def save_mods_to_text_file(self):
         """Saves all the mods in self.mods to a text file."""
 
-        with open("left_4_dead_2_scraper\l4d2_mods.txt", "w") as file:
+        with open("left_4_dead_2_scraper\l4d2_mods.json", "w") as file:
             file.write(json.dumps(self.mods, indent=2))
 
     def get_total_number_of_pages(self):
