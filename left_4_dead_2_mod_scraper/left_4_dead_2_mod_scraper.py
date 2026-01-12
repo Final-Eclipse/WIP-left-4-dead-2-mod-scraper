@@ -7,8 +7,11 @@ import json
 from random import randint
 
 # Repeat scraps for every page of mods
+
 # Display unicode instead of showing \u78a7 such as in some mod descriptions
+
 # Go into each mod individually and get the full length description and preview images (not the thumbnail)
+
 # Make test template in PyQt5
 
 # Will show less mods versus being signed into Steam to hide NSFW 
@@ -25,7 +28,6 @@ class Scraper():
 
     def execute_scraper(self):
         """Starts the scraper."""
-
         self.get_total_number_of_pages()
 
         base_url_page_index = self.base_url.index("p=") + 2
@@ -47,7 +49,6 @@ class Scraper():
 
     def get_mod_details(self) -> None:
         """Gets the title, thumbnail, rating, and url for every mod on the current page."""
-
         for mod_panel in self.all_mod_panels:
             mod_title = mod_panel.find("div", class_="workshopItemTitle").text.strip()
             mod_thumbnail = mod_panel.find("img", class_="workshopItemPreviewImage")["src"]
@@ -62,7 +63,6 @@ class Scraper():
             
     def get_mod_descriptions(self) -> None:
         """Gets all mod descriptions on the current page."""
-
         all_mod_descriptions_html = self.mod_browsing_page.find_all("script")
 
         for mod_description in all_mod_descriptions_html:
@@ -83,7 +83,6 @@ class Scraper():
         
         :param all_descriptions: a list containing all mod descriptions
         """
-
         index = 0
         try:
             for mod_title, mod_details in self.mods.items():
@@ -94,13 +93,11 @@ class Scraper():
 
     def save_mods_to_text_file(self):
         """Saves all the mods in self.mods to a text file."""
-
         with open("left_4_dead_2_scraper\l4d2_mods.json", "w") as file:
             file.write(json.dumps(self.mods, indent=2))
 
     def get_total_number_of_pages(self):
         """Gets the total number of pages available."""
-
         page_numbers_available_html = self.workshop_browse_paging.find_all("a", "pagelink") # Page numbers shown in the workshop's page control area
         page_numbers_available = []
 
@@ -128,36 +125,24 @@ class Scraper():
         self.mod_browsing_page = self.current_page_soup.find("div", class_="workshopBrowseItems")   
         self.all_mod_panels = self.mod_browsing_page.find_all("div", class_="workshopItem")   # Mod panel = the squared space that each mod occupies
         self.workshop_browse_paging = self.current_page_soup.find("div", class_="workshopBrowsePaging") # Page control area
+
+    def get_mod_thumbnail_image_in_bytes(self, mod_thumbnail_url):
+        """Gets the mod thumbnail image url's content in bytes and returns it."""
+        response = requests.get(mod_thumbnail_url)
+        response = response.content
+        return response
     
-l4d2_scraper = Scraper()
-# l4d2_scraper.get_total_number_of_pages()
-# l4d2_scraper.get_mod_details()
-# l4d2_scraper.get_all_mod_descriptions()
-# l4d2_scraper.get_mod_descriptions()
-l4d2_scraper.execute_scraper()
-l4d2_scraper.save_mods_to_text_file()
-
-
-
-
-
- # Only get description if it is truncated possibly
-    # Or just grab the description regardless
-
-    # Getting description of every mod on current page
-    # Description is not on the same page as the browsing page
-    # def get_all_mod_descriptions(self):
-    #     for mod_title, mod_details in self.mods.items():
-    #         mod_url = mod_details["mod_url"]
-            
-    #         response = requests.get(mod_url)
-    #         response_html = response.text
-
-    #         # Creates new soup object and searches for the description
-    #         # Adds the description to the correct mod in self.mods 
-    #         soup = BeautifulSoup(response_html, "html.parser")
-    #         mod_description = soup.find("div", class_="workshopItemDescription")
-    #         mod_description = mod_description.text
-    #         mod_details["mod_description"] = mod_description
-
-    #         sleep(0.1)
+    def get_mod_rating_image_in_bytes(self, mod_rating_image_url):
+        """Gets the mod rating image url's content in bytes and returns it."""
+        response = requests.get(mod_rating_image_url)
+        response = response.content
+        return response
+    
+if __name__ == "__main__":
+    l4d2_scraper = Scraper()
+    # l4d2_scraper.get_total_number_of_pages()
+    # l4d2_scraper.get_mod_details()
+    # l4d2_scraper.get_all_mod_descriptions()
+    # l4d2_scraper.get_mod_descriptions()
+    l4d2_scraper.execute_scraper()
+    l4d2_scraper.save_mods_to_text_file()
